@@ -1,0 +1,3 @@
+How to add customer table in database else How to update database
+How to Give relationship with product, and how to ADD COLUMN
+How to update without CMD all command
