@@ -157,3 +157,7 @@ F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Ra
 F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Razor\Views\Product\edit.cshtml.g.cs
 F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Razor\Views\Product\Details.cshtml.g.cs
 F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Razor\Views\Product\Delete.cshtml.g.cs
+F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Razor\Views\Customer\Index.cshtml.g.cs
+F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Razor\Views\Customer\Create.cshtml.g.cs
+F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Razor\Views\Customer\edit.cshtml.g.cs
+F:\Laxman\.net core\GitRepository\eShopping\eShopping\obj\Debug\netcoreapp3.1\Razor\Views\Customer\Details.cshtml.g.cs

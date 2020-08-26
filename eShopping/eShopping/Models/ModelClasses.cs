@@ -65,6 +65,10 @@ namespace eShopping.Models
         [StringLength(100, ErrorMessage = "Customer Email Address can be max 100 characters")]
         public string CustomerEmailAddress { get; set; }
 
+        [Required(ErrorMessage = "Customer Password is Must")]
+        [StringLength(100, ErrorMessage = "Customer Password can be max 100 characters")]
+        public string CustomerPassword { get; set; }
+
         [Required(ErrorMessage = "Customer Date Of Bairth is Must")]
         [StringLength(100, ErrorMessage = "Customer Date Of Bairth can be max 100 characters")]
         public string CustomerDOB { get; set; }
