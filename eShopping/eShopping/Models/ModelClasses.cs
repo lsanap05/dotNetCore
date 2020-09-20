@@ -37,6 +37,7 @@ namespace eShopping.Models
         [StringLength(20, ErrorMessage = "Manufacturer can be max 20 characters")]
         public string Manufacturer { get; set; }
         [Required]
+        //  [NonNegativeValidator(ErrorMessage = "Value cannot be -ve")]
         public int Price { get; set; }
         [ForeignKey("CategoryRowId")] // Foreign Key
         public int CategoryRowId { get; set; }
@@ -77,5 +78,13 @@ namespace eShopping.Models
         [StringLength(200, ErrorMessage = "Manufacturer can be max 200 characters")]
         public string CustomerAddress { get; set; }
 
+    }
+    public class NonNegativeValidatorAttribute : ValidationAttribute
+    {
+        public override bool IsValid(object value)
+        {
+            if (Convert.ToInt32(value) < 0) return false; // invalid
+            return true; // valid
+        }
     }
 }

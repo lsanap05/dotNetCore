@@ -25,8 +25,8 @@ namespace eShopping.Repositories
         {
             var cat = await context.products.FindAsync(id);
             if (cat == null) return false;
-
             context.products.Remove(cat);
+            context.SaveChanges();
             return true;
         }
 
@@ -48,7 +48,10 @@ namespace eShopping.Repositories
             {
                 cat.ProductId = entity.ProductId;
                 cat.ProductName = entity.ProductName;
-                cat.ProductRowId = entity.ProductRowId;
+                cat.Price = entity.Price;
+                cat.Manufacturer = entity.Manufacturer;
+                cat.CategoryRowId = entity.CategoryRowId;
+                //cat.ProductRowId = entity.ProductRowId;
                 await context.SaveChangesAsync();
                 return cat;
             }

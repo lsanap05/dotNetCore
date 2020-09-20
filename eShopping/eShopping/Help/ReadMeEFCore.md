@@ -28,7 +28,7 @@ EF Core 3.1
 Example Command
 dotnet ef dbcontext scaffold 
 "Data Source=.;Initial Catalog=Company;Integrated Security=SSPI;"
-Microsoft.EntityFrameworkCore.SqlServer
+ Microsoft.EntityFrameworkCore.SqlServer
 -o Models -t Department -t Employee 
 --context-dir Context -c CompnayDbContext
 

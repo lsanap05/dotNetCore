@@ -2,39 +2,74 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using eShopping.CustomeSession;
 using eShopping.Models;
 using eShopping.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace eShopping.Controllers
 {
     public class ProductController : Controller
     {
         private readonly IRepository<Product, int> ProRepo;
+        private readonly IRepository<Category, int> catRepo;
         /// <summary>
         /// Inject the Category Repository
         /// </summary>
-        public ProductController(IRepository<Product, int> ProRepo)
+        public ProductController(IRepository<Product, int> ProRepo, IRepository<Category, int> CatRepo)
         {
             this.ProRepo = ProRepo;
+            this.catRepo = CatRepo;
         }
         /// <summary>
         /// Http Get methdo to return Index view with List of Categories
         /// </summary>
         /// <returns></returns>
-        public async Task<IActionResult> Index()
+        //public async Task<IActionResult> Index()
+        //{
+        //    var products = await ProRepo.GetAsync();
+        //    ViewBag.CategoryRowId = new SelectList(await catRepo.GetAsync(), "CategoryRowId", "CategoeyName");
+        //    return View(products);
+        //}
+        public async  Task<IActionResult> Index()
         {
-            var products = await ProRepo.GetAsync();
-            return View(products);
+            // read data of category from the session
+            Category cat = HttpContext.Session.GetSessionData<Category>("cat");
+            List<Product> prds = new List<Product>();
+            if(cat!=null)
+            {
+                var catRowId = cat.CategoryRowId;
+                if (catRowId > 0)
+                {
+                    prds = ProRepo.GetAsync()
+                        .Result.ToList()
+                        .Where(c => c.CategoryRowId == catRowId).ToList();
+                }
+                else
+                {
+                    prds = ProRepo.GetAsync().Result.ToList();
+                }
+            }
+            else
+            {
+                prds = ProRepo.GetAsync().Result.ToList();
+            }
+
+            ViewBag.CategoryRowId = new SelectList(await catRepo.GetAsync(), "CategoryRowId", "CategoeyName");
+
+            return View(prds);
         }
 
         /// <summary>
         /// Http Get method that will return empty View for accepting Cateogry Data 
         /// </summary>
         /// <returns></returns>
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             var products = new Product();
+            ViewBag.CategoryRowId = new SelectList(await catRepo.GetAsync(), "CategoryRowId", "CategoeyName");
+
             return View(products);
         }
 
@@ -49,6 +84,8 @@ namespace eShopping.Controllers
             // validate the model
             if (ModelState.IsValid)
             {
+                if (products.Price < 0)
+                    throw new Exception("Price cannot be -ve");
                 products = await ProRepo.CreateAsync(products);
                 // return the Index action methods from
                 // the current controller
@@ -64,6 +101,7 @@ namespace eShopping.Controllers
         public async Task<IActionResult> edit(int id)
         {
             var products = await ProRepo.GetAsync(id);
+            ViewBag.CategoryRowId = new SelectList(await catRepo.GetAsync(), "CategoryRowId", "CategoeyName");
             return View(products);
         }
         /// <summary>
@@ -90,6 +128,7 @@ namespace eShopping.Controllers
         public async Task<IActionResult> Details(int id)
         {
             var products = await ProRepo.GetAsync(id);
+            ViewBag.CategoryRowId = new SelectList(await catRepo.GetAsync(), "CategoryRowId", "CategoeyName");
             return View(products);
         }
         /// <summary>
@@ -103,9 +142,9 @@ namespace eShopping.Controllers
             return View(products);
         }
         [HttpPost]
-        public async Task<IActionResult> Delete(string ProductId)
+        public async Task<IActionResult> Delete(int id,string a="a")
         {
-            var cats = await ProRepo.DeleteAsync(Convert.ToInt32(ProductId));
+            var cats = await ProRepo.DeleteAsync(Convert.ToInt32(id));
             return RedirectToAction("Index");
 
         }

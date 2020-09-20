@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Threading.Tasks;
+using Core_WebApp.CustomFilters;
 using eShopping.Models;
 using eShopping.Repositories;
 using Microsoft.AspNetCore.Builder;
@@ -34,7 +35,17 @@ namespace eShopping
             services.AddScoped<IRepository<Category, int>, CategoryRepository>();
             services.AddScoped<IRepository<Product, int>, ProductRepository>();
 
-            services.AddControllersWithViews();
+            //Define session 
+            // session will be stored in cache memmory
+            services.AddDistributedMemoryCache();
+            services.AddSession(session =>session.IdleTimeout=TimeSpan.FromMinutes(20));
+
+            services.AddControllersWithViews( options=> 
+            {
+                options.Filters.Add(new LogFilter());
+                options.Filters.Add(typeof(AppExceptionFilter));
+             }
+            );
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,7 +63,8 @@ namespace eShopping
             }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+            // add session
+            app.UseSession();
             app.UseRouting();
 
             app.UseAuthorization();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using eShopping.CustomeSession;
 using eShopping.Models;
 using eShopping.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,12 @@ namespace eShopping.Controllers
         public IActionResult Create()
         {
             var cat = new Category();
+            var ex = new Exception();
+            if (HttpContext.Session.Keys != null)
+            {
+                cat = HttpContext.Session.GetSessionData<Category>("cat");
+            //  ViewBag['errormsg']=  HttpContext.Session.SetSessionData<Exception>("Ex", ex);
+            }
             return View(cat);
         }
 
@@ -48,15 +55,33 @@ namespace eShopping.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Category cat)
         {
-            // validate the model
-            if (ModelState.IsValid)
+            try
             {
-                cat = await catRepo.CreateAsync(cat);
-                // return the Index action methods from
-                // the current controller
-                return RedirectToAction("Index");
+                // validate the model
+                if (ModelState.IsValid)
+                {
+                    if (cat.BasePrice < 0)
+                        throw new Exception("Base Price cannot be -ve");
+                    cat = await catRepo.CreateAsync(cat);
+                    // return the Index action methods from
+                    // the current controller
+                    return RedirectToAction("Index");
+                }
+                return View(cat); // stey on same page and show error messages
             }
-            return View(cat); // stey on same page and show error messages
+            catch (Exception ex)
+            {
+                HttpContext.Session.SetSessionData<Category>("cat", cat);
+                HttpContext.Session.SetSessionData<Exception>("Ex", ex);
+                // return to error page
+                return View("Error", new ErrorViewModel()
+                {
+                    ControllerName = this.RouteData.Values["controller"].ToString(),
+                    ActionName = this.RouteData.Values["action"].ToString(),
+                    //ErrorField=
+                    ErrorMessage = ex.Message
+                });
+            }
         }
         /// <summary>
         /// Get ID and shows category for edit
@@ -110,6 +135,13 @@ namespace eShopping.Controllers
                 var cats = await catRepo.DeleteAsync(Convert.ToInt32(CategoryRowId));
                 return RedirectToAction("Index");
         
+        }
+        public IActionResult ShowDetails(int id)
+        {
+            Category cat = catRepo.GetAsync(id).Result;
+            HttpContext.Session.SetSessionData<Category>("cat", cat);
+
+            return RedirectToAction("Index", "Product");
         }
     }
 }
